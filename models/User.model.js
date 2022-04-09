@@ -1,20 +1,34 @@
 const { Schema, model } = require("mongoose");
 
-// TODO: Please make sure you edit the user model to whatever makes sense in this case
-const userSchema = new Schema(
-  {
-    username: {
-      type: String,
-      // unique: true -> Ideally, should be unique, but its up to you
-    },
-    password: String,
-    email: String,
+const userSchema = new Schema({
+  username: {
+    type: String,
+    required: true,
+    trim: true,
   },
-  {
-    // this second object adds extra properties: `createdAt` and `updatedAt`
-    timestamps: true,
-  }
-);
+  password: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    unique: true,
+    match: [/^\S+@\S+\.\S+$/, "You need to use a valid email."],
+    lowercase: true,
+    trim: true,
+  },
+  profileImg: {
+    type: String,
+    default:
+      "https://res.cloudinary.com/dxxmsbtrt/image/upload/v1645126731/SecretSanta/avatar-profile_ty1qpt.webp",
+  },
+  genres: String,
+  about: String,
+  followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  follows: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  favourites: [{ type: Schema.Types.ObjectId, ref: "Movie" }],
+  review: [{ type: Schema.Types.ObjectId, ref: "Review" }],
+});
 
 const User = model("User", userSchema);
 

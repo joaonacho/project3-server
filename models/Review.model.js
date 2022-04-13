@@ -1,10 +1,10 @@
 const { Schema, model } = require("mongoose");
 
 const reviewSchema = new Schema({
-  title: String,
-  poster: String,
-  description: String,
-  projects: { type: Schema.Types.ObjectId, ref: "Project" },
+  author: { type: Schema.Types.ObjectId, ref: "User" },
+  movie: { type: Schema.Types.ObjectId, ref: "Movie" },
+  review: String,
+  rating: { type: Number, min: 0, max: 10, required: true },
 });
 
 module.exports = model("Review", reviewSchema);

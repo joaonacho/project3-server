@@ -19,7 +19,7 @@ require("./config")(app);
 const allRoutes = require("./routes/index.routes");
 app.use("/api", allRoutes);
 
-const projectRoutes = require("./routes/project.routes");
+const projectRoutes = require("./routes/movie.routes");
 app.use("/api", projectRoutes);
 
 const authRoutes = require("./routes/auth.routes");

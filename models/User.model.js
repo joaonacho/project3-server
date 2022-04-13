@@ -4,7 +4,6 @@ const userSchema = new Schema({
   username: {
     type: String,
     required: true,
-    trim: true,
   },
   password: {
     type: String,
@@ -27,7 +26,8 @@ const userSchema = new Schema({
   followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
   follows: [{ type: Schema.Types.ObjectId, ref: "User" }],
   favourites: [{ type: Schema.Types.ObjectId, ref: "Movie" }],
-  review: [{ type: Schema.Types.ObjectId, ref: "Review" }],
+  reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
+  posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
 });
 
 const User = model("User", userSchema);

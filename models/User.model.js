@@ -13,6 +13,7 @@ const userSchema = new Schema({
     type: String,
     unique: true,
     match: [/^\S+@\S+\.\S+$/, "You need to use a valid email."],
+    required: true,
     lowercase: true,
     trim: true,
   },
@@ -21,6 +22,7 @@ const userSchema = new Schema({
     default:
       "https://res.cloudinary.com/dxxmsbtrt/image/upload/v1645126731/SecretSanta/avatar-profile_ty1qpt.webp",
   },
+  country: String,
   genres: String,
   about: String,
   followers: [{ type: Schema.Types.ObjectId, ref: "User" }],

@@ -23,7 +23,7 @@ const userSchema = new Schema({
       "https://res.cloudinary.com/dxxmsbtrt/image/upload/v1645126731/SecretSanta/avatar-profile_ty1qpt.webp",
   },
   country: String,
-  genres: String,
+  genres: [String],
   about: String,
   followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
   follows: [{ type: Schema.Types.ObjectId, ref: "User" }],

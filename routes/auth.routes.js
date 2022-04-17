@@ -9,7 +9,7 @@ const router = express.Router();
 //Signup
 router.post("/signup", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, country, genres } = req.body;
 
     //Info for confirmation
     if (!email || !password || !username) {
@@ -32,6 +32,8 @@ router.post("/signup", async (req, res) => {
     const createdUser = await User.create({
       email,
       username,
+      country,
+      genres,
       password: hashedPassword,
     });
 
@@ -74,17 +76,17 @@ router.post("/login", async (req, res) => {
         _id: foundUser._id,
         email: foundUser.email,
         username: foundUser.username,
-        profileImg: foundUser.profileImg,
-        country: foundUser.country,
-        genres: foundUser.genres,
-        about: foundUser.about,
-        //these are objectIds
-        followers: foundUser.followers,
-        follows: foundUser.follows,
-        favourites: foundUser.favourites,
-        reviews: foundUser.reviews,
-        posts: foundUser.posts,
-        //these are objectIds
+        // profileImg: foundUser.profileImg,
+        // country: foundUser.country,
+        // genres: foundUser.genres,
+        // about: foundUser.about,
+        // //these are objectIds
+        // followers: foundUser.followers,
+        // follows: foundUser.follows,
+        // favourites: foundUser.favourites,
+        // reviews: foundUser.reviews,
+        // posts: foundUser.posts,
+        // //these are objectIds
       },
       process.env.TOKEN_SECRET,
       { algorithm: "HS256", expiresIn: "6h" }

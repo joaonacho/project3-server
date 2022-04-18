@@ -1,15 +1,36 @@
 const router = require("express").Router();
 const User = require("../models/User.model");
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 
-router.get("/profile/:userId", async (req, res) => {
+//GET user profile
+router.get("/profile/:username", async (req, res) => {
   try {
-    const { userId } = req.params.userId;
+    const { username } = req.params;
 
-    const foundUser = await User.findById(userId);
-    console.log(req.params.userId);
+    const foundUser = await User.findOne({ username });
     res.status(200).json(foundUser);
   } catch (error) {
     res.status(500).json({ error });
   }
 });
+
+//PUT edit user profile
+router.put("/profile/:username", isAuthenticated, async (req, res) => {
+  try {
+    const { username } = req.params;
+    const { genres } = req.body;
+
+    const foundUser = await User.findOneAndUpdate(
+      username,
+      {
+        $push: { genres: genres },
+      },
+      { new: true }
+    );
+    res.status(200).json(foundUser);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
 module.exports = router;

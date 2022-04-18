@@ -76,7 +76,7 @@ router.post("/login", async (req, res) => {
         _id: foundUser._id,
         email: foundUser.email,
         username: foundUser.username,
-        // profileImg: foundUser.profileImg,
+        profileImg: foundUser.profileImg,
         // country: foundUser.country,
         // genres: foundUser.genres,
         // about: foundUser.about,

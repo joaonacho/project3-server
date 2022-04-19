@@ -21,7 +21,7 @@ const userSchema = new Schema({
   profileImg: {
     type: String,
     default:
-      "https://res.cloudinary.com/dxxmsbtrt/image/upload/v1645126731/SecretSanta/avatar-profile_ty1qpt.webp",
+      "https://res.cloudinary.com/dxxmsbtrt/image/upload/v1650390383/MovieScreen/Users/avatar-profile_af3anp.webp",
   },
   country: String,
   genres: [String],

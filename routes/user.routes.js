@@ -14,11 +14,11 @@ router.get("/profile/:username", async (req, res) => {
   }
 });
 
-//PUT edit user profile -> WIP
+//PUT edit user profile
 router.put("/profile/:username/edit", async (req, res) => {
   try {
     const { username } = req.params;
-    const { genres, country, about } = req.body;
+    const { genres, country, about, profileImg } = req.body;
 
     const foundUser = await User.findOneAndUpdate(
       { username },
@@ -26,6 +26,7 @@ router.put("/profile/:username/edit", async (req, res) => {
         country: country,
         genres: genres,
         about: about,
+        profileImg,
       },
       { new: true }
     );

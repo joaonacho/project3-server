@@ -4,6 +4,7 @@ const userSchema = new Schema({
   username: {
     type: String,
     required: true,
+    unique: true,
   },
   password: {
     type: String,
@@ -24,7 +25,7 @@ const userSchema = new Schema({
   },
   country: String,
   genres: [String],
-  about: String,
+  about: { type: String, default: "I love movies" },
   followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
   follows: [{ type: Schema.Types.ObjectId, ref: "User" }],
   favourites: [{ type: Schema.Types.ObjectId, ref: "Movie" }],

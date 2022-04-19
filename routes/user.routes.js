@@ -14,16 +14,18 @@ router.get("/profile/:username", async (req, res) => {
   }
 });
 
-//PUT edit user profile
-router.put("/profile/:username", isAuthenticated, async (req, res) => {
+//PUT edit user profile -> WIP
+router.put("/profile/:username/edit", async (req, res) => {
   try {
     const { username } = req.params;
-    const { genres } = req.body;
+    const { genres, country, about } = req.body;
 
     const foundUser = await User.findOneAndUpdate(
-      username,
+      { username },
       {
-        $push: { genres: genres },
+        country: country,
+        genres: genres,
+        about: about,
       },
       { new: true }
     );

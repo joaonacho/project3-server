@@ -36,4 +36,13 @@ router.put("/profile/:username/edit", async (req, res) => {
   }
 });
 
+//GET random 5 users to display in homepage
+router.get("/random-users", async (req, res) => {
+  try {
+    const users = await User.find();
+
+    console.log(fiveUsers);
+  } catch (error) {}
+});
+
 module.exports = router;

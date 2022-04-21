@@ -7,7 +7,7 @@ router.get("/profile/:username", async (req, res) => {
   try {
     const { username } = req.params;
 
-    const foundUser = await User.findOne({ username });
+    const foundUser = await User.findOne({ username }).populate("favourites");
     res.status(200).json(foundUser);
   } catch (error) {
     res.status(500).json({ error });

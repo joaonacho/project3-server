@@ -71,4 +71,71 @@ router.post("/upload", fileUpload.single("file"), (req, res) => {
   }
 });
 
+//PUT movie to favourite list
+router.put("/movies/add", isAuthenticated, async (req, res) => {
+  try {
+    const {
+      title,
+      poster_path,
+      tagline,
+      overview,
+      vote_average,
+      release_date,
+    } = req.body;
+
+    const checkForMovieDB = await Movie.findOne({ title });
+
+    console.log("payload ", req.payload);
+    const userFavList = await User.findOne({ username: req.payload.username });
+
+    console.log(userFavList.favourites, "favourite list");
+    console.log(checkForMovieDB, "movie in DB??");
+
+    if (
+      checkForMovieDB &&
+      userFavList.favourites.includes(checkForMovieDB._id)
+    ) {
+      return;
+    }
+
+    if (
+      checkForMovieDB &&
+      !userFavList.favourites.includes(checkForMovieDB._id)
+    ) {
+      const response = await User.findOneAndUpdate(
+        req.payload.username,
+        {
+          $push: { favourites: checkForMovieDB._id },
+        },
+        { new: true }
+      );
+      res.status(200).json(response);
+    }
+
+    if (!checkForMovieDB) {
+      console.log("here");
+      const movieCreated = await Movie.create({
+        title,
+        poster_path,
+        tagline,
+        overview,
+        vote_average,
+        release_date,
+        reviews: [],
+      });
+
+      const response = await User.findOneAndUpdate(
+        req.payload.username,
+        {
+          $push: { favourites: movieCreated._id },
+        },
+        { new: true }
+      );
+      res.status(200).json(response);
+    }
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
 module.exports = router;

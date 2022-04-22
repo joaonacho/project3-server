@@ -74,23 +74,27 @@ router.post("/upload", fileUpload.single("file"), (req, res) => {
 //PUT movie to favourite list
 router.put("/movies/add", isAuthenticated, async (req, res) => {
   try {
+    //grab the info from the moviedetails page
     const {
       title,
+      genres,
       poster_path,
       tagline,
       overview,
       vote_average,
       release_date,
+      runtime,
+      id,
+      imdb_id,
     } = req.body;
 
-    const checkForMovieDB = await Movie.findOne({ title });
+    //check if movie exists in my DB
+    const checkForMovieDB = await Movie.findOne({ id });
 
-    console.log("payload ", req.payload);
+    //find user in my DB
     const userFavList = await User.findOne({ username: req.payload.username });
 
-    console.log(userFavList.favourites, "favourite list");
-    console.log(checkForMovieDB, "movie in DB??");
-
+    //if the movie is in my DB and if the movieID is in the user favourite's array, do nothing - avoid repetitions
     if (
       checkForMovieDB &&
       userFavList.favourites.includes(checkForMovieDB._id)
@@ -98,6 +102,7 @@ router.put("/movies/add", isAuthenticated, async (req, res) => {
       return;
     }
 
+    //if the movie is found in my DB and the movieID is NOT in the user favourite's array, put the ID inside
     if (
       checkForMovieDB &&
       !userFavList.favourites.includes(checkForMovieDB._id)
@@ -112,15 +117,19 @@ router.put("/movies/add", isAuthenticated, async (req, res) => {
       res.status(200).json(response);
     }
 
+    //If the movie is not found in my DB, it means that the movie was not added to favourite's by any other user, so create a movie in my DB and pass it to the user favourite's array
     if (!checkForMovieDB) {
-      console.log("here");
       const movieCreated = await Movie.create({
         title,
+        genres,
         poster_path,
         tagline,
         overview,
         vote_average,
         release_date,
+        runtime,
+        id,
+        imdb_id,
         reviews: [],
       });
 
@@ -138,4 +147,27 @@ router.put("/movies/add", isAuthenticated, async (req, res) => {
   }
 });
 
+//PUT remove movie from favourites
+router.put("/movies/:movieId/remove", async (req, res) => {
+  try {
+    const { movieId } = req.params;
+    const { username } = req.body;
+
+    //find movie from my DB
+    const movieFromDB = await Movie.findOne({ id: movieId });
+
+    //find user in my DB & update favourite list
+    const userToUpdate = await User.findOneAndUpdate(
+      username,
+      {
+        $pull: { favourites: movieFromDB._id },
+      },
+      { new: true }
+    );
+
+    res.status(200).json(userToUpdate);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
 module.exports = router;

@@ -49,6 +49,7 @@ router.get("/movies/:movieId", async (req, res) => {
     const { movieId } = req.params;
 
     const foundMovie = await Movie.findById(movieId).populate("reviews");
+    console.log(foundMovie);
     res.status(200).json(foundMovie);
   } catch (error) {
     res.status(500).json({ error });

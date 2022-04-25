@@ -3,6 +3,7 @@ const User = require("../models/User.model");
 const Movie = require("../models/Movie.model");
 const Review = require("../models/Review.model");
 
+//POST review
 router.post("/movies/:movieId/review", async (req, res) => {
   try {
     const { movieId } = req.params;
@@ -48,7 +49,6 @@ router.post("/movies/:movieId/review", async (req, res) => {
 
     //If the movie does not exist in my DB, create one, create the review and finally pass the id to the reviews array
     if (!ratedMovie) {
-      console.log("HEREEEEE");
       const newMovie = await Movie.create({
         title,
         genres,

@@ -4,7 +4,7 @@ const reviewSchema = new Schema(
   {
     author: { type: Schema.Types.ObjectId, ref: "User" },
     movie: { type: Schema.Types.ObjectId, ref: "Movie" },
-    review: String,
+    review: { type: String, required: true },
     rating: { type: Number, min: 0, max: 10, required: true },
   },
   {

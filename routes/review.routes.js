@@ -90,6 +90,46 @@ router.post("/movies/:movieId/review", async (req, res) => {
 
     res.status(200).json(foundUser);
   } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
+//GET reviews in user profile
+router.get("/profile/:username/reviews", async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    const foundUser = await User.findOne({ username: username }).populate({
+      path: "reviews",
+      populate: { path: "movie" },
+    });
+
+    res.status(200).json(foundUser);
+  } catch (error) {
+    console.log("error", error.message);
+    res.status(500).json({ error });
+  }
+});
+
+//PUT edit review
+//IT'S NOT WORKING - não está a fazer update em DB
+router.put("/profile/:reviewId/edit", async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+
+    const { review, rating } = req.body.movie;
+
+    console.log(reviewId);
+
+    const reviewToUpdate = await Review.findByIdAndUpdate(
+      reviewId,
+      { review: review },
+      { rating: rating },
+      { new: true }
+    );
+
+    res.status(200).json(reviewToUpdate);
+  } catch (error) {
     console.log("error", error.message);
     res.status(500).json({ error });
   }

@@ -112,22 +112,16 @@ router.get("/profile/:username/reviews", async (req, res) => {
 });
 
 //PUT edit review
-//IT'S NOT WORKING - não está a fazer update em DB
-router.put("/profile/:reviewId/edit", async (req, res) => {
+router.put("/:reviewId/edit", async (req, res) => {
   try {
     const { reviewId } = req.params;
-
-    const { review, rating } = req.body.movie;
-
-    console.log(reviewId);
+    const { review, rating } = req.body.editingMovie;
 
     const reviewToUpdate = await Review.findByIdAndUpdate(
       reviewId,
-      { review: review },
-      { rating: rating },
+      { review, rating },
       { new: true }
     );
-
     res.status(200).json(reviewToUpdate);
   } catch (error) {
     console.log("error", error.message);
@@ -135,4 +129,33 @@ router.put("/profile/:reviewId/edit", async (req, res) => {
   }
 });
 
+//DELETE a review
+router.delete("/:reviewId/delete", async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+
+    const findReview = await Review.findById(reviewId)
+      .populate("author")
+      .populate("movie");
+
+    await User.findOneAndUpdate(
+      { username: findReview.author.username },
+      { $pull: { reviews: reviewId } },
+      { new: true }
+    );
+
+    await Movie.findOneAndUpdate(
+      { id: findReview.movie.id },
+      { $pull: { reviews: reviewId } },
+      { new: true }
+    );
+
+    const deletedReview = await Review.findByIdAndDelete(reviewId);
+
+    res.status(200).json(deletedReview);
+  } catch (error) {
+    console.log("error", error.message);
+    res.status(500).json({ error });
+  }
+});
 module.exports = router;

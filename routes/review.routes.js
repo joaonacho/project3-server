@@ -158,4 +158,27 @@ router.delete("/:reviewId/delete", async (req, res) => {
     res.status(500).json({ error });
   }
 });
+
+//GET 3 random reviews
+router.get("/random-reviews", async (req, res) => {
+  try {
+    const reviews = await Review.find().populate("author").populate("movie");
+
+    let randomPos;
+    let temp;
+
+    for (let i = reviews.length - 1; i > 0; i--) {
+      randomPos = Math.floor(Math.random() * (i + 1));
+      temp = reviews[i];
+      reviews[i] = reviews[randomPos];
+      reviews[randomPos] = temp;
+    }
+
+    let randomReviews = reviews.slice(0, 3);
+
+    res.status(200).json(randomReviews);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
 module.exports = router;

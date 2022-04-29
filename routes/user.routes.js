@@ -51,9 +51,20 @@ router.get("/random-users", async (req, res) => {
       users[randomPos] = temp;
     }
 
-    let fiveUsers = users.slice(0, 5);
+    let fiveUsers = users.slice(0, 3);
 
     res.status(200).json(fiveUsers);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
+//GET search users
+router.get("/search-users", async (req, res) => {
+  try {
+    const usersInDB = await User.find();
+
+    res.status(200).json(usersInDB);
   } catch (error) {
     res.status(500).json({ error });
   }

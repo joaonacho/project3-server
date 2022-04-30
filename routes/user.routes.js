@@ -60,11 +60,16 @@ router.get("/random-users", async (req, res) => {
 });
 
 //GET search users
-router.get("/search-users", async (req, res) => {
+router.get("/search-users/:query", async (req, res) => {
   try {
+    const { query } = req.params;
     const usersInDB = await User.find();
 
-    res.status(200).json(usersInDB);
+    const usersFound = usersInDB.filter((user) => {
+      return user.username.toLowerCase().replace(" ", "").includes(query);
+    });
+
+    res.status(200).json(usersFound);
   } catch (error) {
     res.status(500).json({ error });
   }

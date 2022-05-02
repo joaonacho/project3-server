@@ -75,4 +75,73 @@ router.get("/search-users/:query", async (req, res) => {
   }
 });
 
+//PUT follow users
+router.put("/profile/:username/follow", async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    //user that is being followed
+    const userToFollow = await User.findOne({ username: username });
+
+    //user that follows
+    const followingUser = await User.findById(req.body.user._id);
+
+    if (!userToFollow.followers.includes(followingUser._id)) {
+      await User.findByIdAndUpdate(
+        userToFollow._id,
+        { $push: { followers: followingUser._id } },
+        { new: true }
+      );
+    }
+
+    if (!followingUser.follows.includes(userToFollow._id)) {
+      await User.findByIdAndUpdate(
+        followingUser._id,
+        {
+          $push: { follows: userToFollow._id },
+        },
+        { new: true }
+      );
+    }
+
+    res.status(200).json(followingUser);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
+//PUT unfollow users
+router.put("/profile/:username/unfollow", async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    //user that is being unfollowed
+    const userToUnfollow = await User.findOne({ username: username });
+
+    //user that unfollows
+    const unfollowingUser = await User.findById(req.body.user._id);
+
+    if (userToUnfollow.followers.includes(unfollowingUser._id)) {
+      await User.findByIdAndUpdate(
+        userToUnfollow._id,
+        { $pull: { followers: unfollowingUser._id } },
+        { new: true }
+      );
+    }
+
+    if (unfollowingUser.follows.includes(userToUnfollow._id)) {
+      await User.findByIdAndUpdate(
+        unfollowingUser._id,
+        {
+          $pull: { follows: userToUnfollow._id },
+        },
+        { new: true }
+      );
+    }
+
+    res.status(200).json(unfollowingUser);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
 module.exports = router;

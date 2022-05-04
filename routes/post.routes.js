@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const User = require("../models/User.model");
 const Post = require("../models/Post.model.js");
+const Comment = require("../models/Comment.model");
 
 //GET user feed and display posts from follows
 router.get("/feed/:username", async (req, res) => {
@@ -46,7 +47,6 @@ router.post("/create-post", async (req, res) => {
       comments,
     });
 
-    console.log(newPost);
     await User.findByIdAndUpdate(
       author,
       { $push: { posts: newPost._id } },
@@ -59,4 +59,69 @@ router.post("/create-post", async (req, res) => {
   }
 });
 
+//POST delete a post
+router.delete("/delete/:postId", async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const postToDelete = await Post.findById(postId).populate("author");
+
+    await User.findByIdAndUpdate(
+      postToDelete.author._id,
+      { $pull: { posts: postToDelete._id } },
+      { new: true }
+    );
+
+    const deletedPost = await Post.findByIdAndDelete(postId);
+
+    res.status(200).json(deletedPost);
+  } catch (error) {
+    console.log("error", error.message);
+    res.status(500).json({ error });
+  }
+});
+
+//COMMENTS
+//POST create comment
+router.post("/comment/:postId", async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { comment } = req.body.comment;
+    const { user } = req.body.comment;
+
+    const createdComment = await Comment.create({
+      author: user,
+      post: postId,
+      content: comment,
+    });
+
+    const foundPost = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $push: { comments: createdComment._id },
+      },
+      { new: true }
+    );
+
+    res.status(200).json(foundPost);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
+//GET display post comments
+router.get("/comment/:postId", async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const commentsInPost = await Post.findById(postId).populate({
+      path: "comments",
+      populate: { path: "author" },
+    });
+
+    res.status(200).json(commentsInPost);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
 module.exports = router;

@@ -124,4 +124,45 @@ router.get("/comment/:postId", async (req, res) => {
     res.status(500).json({ error });
   }
 });
+
+//LIKES
+//PUT like a post
+router.put("/like/:postId", async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { userId } = req.body;
+
+    const postToLike = await Post.findById(postId);
+
+    if (!postToLike.likes.includes(userId)) {
+      await Post.findByIdAndUpdate(
+        postId,
+        { $push: { likes: userId } },
+        { new: true }
+      );
+    }
+
+    res.status(200).json(postToLike);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
+//PUT dislike a post
+router.put("/dislike/:postId", async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { userId } = req.body;
+
+    const postToDislike = await Post.findByIdAndUpdate(
+      postId,
+      { $pull: { likes: userId } },
+      { new: true }
+    );
+
+    res.status(200).json(postToDislike);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
 module.exports = router;

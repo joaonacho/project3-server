@@ -53,7 +53,9 @@ router.post("/create-post", async (req, res) => {
       { new: true }
     );
 
-    res.status(200).json(newPost);
+    const createdPost = await Post.findById(newPost._id).populate("author");
+
+    res.status(200).json(createdPost);
   } catch (error) {
     res.status(500).json({ error });
   }

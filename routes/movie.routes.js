@@ -93,14 +93,16 @@ router.put("/movies/add", isAuthenticated, async (req, res) => {
     const checkForMovieDB = await Movie.findOne({ id });
 
     //find user in my DB
-    const userFavList = await User.findOne({ username: req.payload.username });
+    const userFavList = await User.findOne({
+      username: req.payload.username,
+    });
 
     //if the movie is in my DB and if the movieID is in the user favourite's array, do nothing - avoid repetitions
     if (
       checkForMovieDB &&
       userFavList.favourites.includes(checkForMovieDB._id)
     ) {
-      return;
+      return res.status(200).json(checkForMovieDB);
     }
 
     //if the movie is found in my DB and the movieID is NOT in the user favourite's array, put the ID inside
@@ -109,12 +111,13 @@ router.put("/movies/add", isAuthenticated, async (req, res) => {
       !userFavList.favourites.includes(checkForMovieDB._id)
     ) {
       const response = await User.findOneAndUpdate(
-        req.payload.username,
+        { username: req.payload.username },
         {
           $push: { favourites: checkForMovieDB._id },
         },
         { new: true }
       );
+
       res.status(200).json(response);
     }
 
@@ -135,12 +138,13 @@ router.put("/movies/add", isAuthenticated, async (req, res) => {
       });
 
       const response = await User.findOneAndUpdate(
-        req.payload.username,
+        { username: req.payload.username },
         {
           $push: { favourites: movieCreated._id },
         },
         { new: true }
       );
+
       res.status(200).json(response);
     }
   } catch (error) {
@@ -159,7 +163,7 @@ router.put("/movies/:movieId/remove", async (req, res) => {
 
     //find user in my DB & update favourite list
     const userToUpdate = await User.findOneAndUpdate(
-      username,
+      { username: username },
       {
         $pull: { favourites: movieFromDB._id },
       },

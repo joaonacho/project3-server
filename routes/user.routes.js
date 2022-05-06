@@ -36,7 +36,7 @@ router.put("/profile/:username/edit", async (req, res) => {
   }
 });
 
-//GET generic random 5 users to display in homepage
+//GET generic random 6 users to display in homepage
 router.get("/random-users", async (req, res) => {
   try {
     const users = await User.find();
@@ -51,9 +51,9 @@ router.get("/random-users", async (req, res) => {
       users[randomPos] = temp;
     }
 
-    let fiveUsers = users.slice(0, 3);
+    let sixUsers = users.slice(0, 6);
 
-    res.status(200).json(fiveUsers);
+    res.status(200).json(sixUsers);
   } catch (error) {
     res.status(500).json({ error });
   }
@@ -140,6 +140,34 @@ router.put("/profile/:username/unfollow", async (req, res) => {
     }
 
     res.status(200).json(unfollowingUser);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
+//GET users that match genres
+router.get("/similar-genres/:username", async (req, res) => {
+  try {
+    const { username } = req.params;
+    const foundUser = await User.findOne({ username: username });
+
+    const allUsers = await User.find();
+    const { genres } = foundUser;
+
+    let matchedUsers = [];
+    genres.forEach((genre) => {
+      allUsers.filter((user) => {
+        if (user.genres.includes(genre) === true) {
+          matchedUsers.push(user);
+        }
+      });
+    });
+
+    let filteredMatchedUsers = [...new Set(matchedUsers)].filter((user) => {
+      return user.username !== username;
+    });
+
+    res.status(200).json(filteredMatchedUsers);
   } catch (error) {
     res.status(500).json({ error });
   }

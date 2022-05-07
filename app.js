@@ -1,3 +1,5 @@
+// const socketIo = require("socket.io");
+
 // ℹ️ Gets access to environment variables/settings
 // https://www.npmjs.com/package/dotenv
 require("dotenv/config");
@@ -14,8 +16,12 @@ const app = express();
 // ℹ️ This function is getting exported from the config folder. It runs most pieces of middleware
 require("./config")(app);
 
+// const io = socketIo();
+// app.io = io;
+
 // 👇 Start handling routes here
 // Contrary to the views version, all routes are controlled from the routes/index.js
+
 const allRoutes = require("./routes/index.routes");
 app.use("/api", allRoutes);
 

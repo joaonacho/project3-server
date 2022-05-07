@@ -1,3 +1,4 @@
+// module.exports = function (io) {
 const router = require("express").Router();
 const User = require("../models/User.model");
 const Post = require("../models/Post.model.js");
@@ -55,6 +56,7 @@ router.post("/create-post", async (req, res) => {
 
     const createdPost = await Post.findById(newPost._id).populate("author");
 
+    // io.emit("newPost", createdPost);
     res.status(200).json(createdPost);
   } catch (error) {
     res.status(500).json({ error });
@@ -167,4 +169,7 @@ router.put("/dislike/:postId", async (req, res) => {
     res.status(500).json({ error });
   }
 });
+
+//   return router;
+// };
 module.exports = router;

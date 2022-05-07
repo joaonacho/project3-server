@@ -157,7 +157,7 @@ router.get("/similar-genres/:username", async (req, res) => {
     let matchedUsers = [];
     genres.forEach((genre) => {
       allUsers.filter((user) => {
-        if (user.genres.includes(genre) === true) {
+        if (user.genres.includes(genre)) {
           matchedUsers.push(user);
         }
       });

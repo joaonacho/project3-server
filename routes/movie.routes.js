@@ -3,6 +3,7 @@ const { isAuthenticated } = require("../middleware/jwt.middleware");
 const fileUpload = require("../config/cloudinary");
 const User = require("../models/User.model");
 const Movie = require("../models/Movie.model");
+const Review = require("../models/Review.model");
 
 //GET all movies
 router.get("/movies", async (req, res) => {
@@ -43,24 +44,20 @@ router.delete("/movies/:movieId", async (req, res) => {
   }
 });
 
-//GET one movie
-router.get("/movies/:movieId", async (req, res) => {
+//GET movie reviews
+router.get("/reviews/:movieId", async (req, res) => {
   try {
     const { movieId } = req.params;
 
-    const foundMovie = await Movie.findById(movieId).populate("reviews");
-    console.log(foundMovie);
+    const foundMovie = await Movie.findOne({ id: movieId })
+      .populate("reviews")
+      .populate({ path: "reviews", populate: { path: "author" } });
+
     res.status(200).json(foundMovie);
   } catch (error) {
     res.status(500).json({ error });
   }
 });
-
-//UPDATE (PUT or PATCH)
-router.put("/projects/:projectId", async (req, res) => {});
-
-//POST create tasks
-router.post("/tasks", async (req, res) => {});
 
 router.post("/upload", fileUpload.single("file"), (req, res) => {
   try {

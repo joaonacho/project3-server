@@ -7,13 +7,45 @@ router.get("/profile/:username", async (req, res) => {
   try {
     const { username } = req.params;
 
-    const foundUser = await User.findOne({ username }).populate("favourites");
+    const foundUser = await User.findOne({ username })
+      .populate("favourites")
+      .populate("follows")
+      .populate("followers");
     res.status(200).json(foundUser);
   } catch (error) {
     res.status(500).json({ error });
   }
 });
 
+//GET user followers
+router.get("/:username/followers", async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    const foundUser = await User.findOne({ username: username }).populate(
+      "followers"
+    );
+
+    res.status(200).json(foundUser);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
+//GET user following
+router.get("/:username/following", async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    const foundUser = await User.findOne({ username: username }).populate(
+      "follows"
+    );
+
+    res.status(200).json(foundUser);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
 //PUT edit user profile
 router.put("/profile/:username/edit", async (req, res) => {
   try {

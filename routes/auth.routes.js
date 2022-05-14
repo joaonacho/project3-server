@@ -18,7 +18,7 @@ router.post("/signup", async (req, res) => {
     }
 
     //Checks if username already exists in DB
-    const foundUser = await User.findOne({ username });
+    const foundUser = await User.findOne({ username: username });
     if (foundUser) {
       res.status(400).json({ message: "user already exists" });
       return;
@@ -51,14 +51,14 @@ router.post("/signup", async (req, res) => {
 //LOGIN
 router.post("/login", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!username || !password) {
+    if (!email || !password) {
       res.status(400).json({ message: "missing fields" });
       return;
     }
 
-    const foundUser = await User.findOne({ username });
+    const foundUser = await User.findOne({ email: email });
 
     if (!foundUser) {
       res.status(401).json({ message: "invalid login" });
